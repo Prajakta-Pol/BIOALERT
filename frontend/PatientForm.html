@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Emergency Patient Details - BioMediAlert</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #e3f2fd, #bbdefb, #e8f6ff);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start; 
+      padding: 2rem;
+      position: relative;
+      overflow-y: auto;
+    }
+    .glass {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+    #statusMsg {
+      transition: all 0.3s ease;
+      opacity: 0;
+    }
+    #statusMsg.show {
+      opacity: 1;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Background Glow -->
+  <div class="absolute w-96 h-96 bg-blue-400/25 rounded-full blur-3xl top-10 left-6 animate-pulse"></div>
+  <div class="absolute w-80 h-80 bg-teal-300/25 rounded-full blur-3xl bottom-10 right-6 animate-pulse"></div>
+
+  <!-- Form Container -->
+  <div class="glass shadow-2xl rounded-2xl p-8 md:p-10 w-full max-w-2xl z-10">
+    <h2 class="text-3xl font-bold text-center text-[#0a3d62] mb-6">🩺 Emergency Patient Details</h2>
+
+    <form id="patientForm" enctype="multipart/form-data" class="space-y-4">
+      <!-- Personal Info -->
+      <div>
+        <label class="font-semibold text-gray-700">Full Name</label>
+        <input type="text" id="name" name="Fullname" required class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none">
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="font-semibold text-gray-700">Date of Birth</label>
+          <input type="date" id="dob" name="dob" required class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none">
+        </div>
+        <div>
+  <label class="font-semibold text-gray-700">Email Address</label>
+  <input type="email" id="email" name="email" placeholder="patient@example.com" required 
+         class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none">
+</div>
+
+        <div>
+          <label class="font-semibold text-gray-700">Gender</label>
+          <select id="gender" name="gender" required class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none">
+            <option value="">Select Gender</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label class="font-semibold text-gray-700">Aadhaar Number</label>
+        <input type="text" id="aadhaar" name="aadhaar" placeholder="12-digit Aadhaar" required class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none">
+      </div>
+
+      <div>
+  <label class="font-semibold text-gray-700">PAN Number</label>
+  <input type="text" id="pan" name="pan" placeholder="ABCDE1234F" 
+         class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none">
+</div>
+
+<div>
+  <label class="font-semibold text-gray-700">Driving License Number</label>
+  <input type="text" id="license" name="license" placeholder="DL-XX-0000000000"
+         class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none">
+</div>
+      <div>
+        <label class="font-semibold text-gray-700">Profile Photo</label>
+        <input type="file" id="photo" name="photo" accept="image/*" class="w-full p-2 border border-gray-300 rounded-xl">
+      </div>
+
+      <!-- Emergency Contact -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="font-semibold text-gray-700">Emergency Contact Name</label>
+          <input type="text" id="emergencyName" name="emergencyName" required class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none">
+        </div>
+        <div>
+          <label class="font-semibold text-gray-700">Emergency Contact Phone</label>
+          <input type="tel" id="emergencyPhone" name="emergencyPhone" required class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none">
+        </div>
+      </div>
+
+      <!-- Medical Info -->
+      <div>
+        <label class="font-semibold text-gray-700">Blood Group</label>
+        <select id="bloodGroup" name="bloodGroup" required class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none">
+          <option value="">Select Blood Group</option>
+          <option>A+</option><option>A-</option>
+          <option>B+</option><option>B-</option>
+          <option>O+</option><option>O-</option>
+          <option>AB+</option><option>AB-</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="font-semibold text-gray-700">Allergies</label>
+        <textarea id="allergies" name="allergies" placeholder="List allergies if any" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none"></textarea>
+      </div>
+
+      <div>
+        <label class="font-semibold text-gray-700">Chronic Diseases</label>
+        <textarea id="chronic" name="chronic" placeholder="Eg: Diabetes, Asthma, Heart Disease" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none"></textarea>
+      </div>
+
+      <div>
+        <label class="font-semibold text-gray-700">Current Medications</label>
+        <textarea id="medications" name="medications" placeholder="Eg: Insulin, BP Tablets" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none"></textarea>
+      </div>
+
+      <div>
+        <label class="font-semibold text-gray-700">Previous Surgeries / Major History</label>
+        <textarea id="history" name="history" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none"></textarea>
+      </div>
+
+      <div>
+        <label class="font-semibold text-gray-700">Special Instructions</label>
+        <textarea id="instructions" name="instructions" placeholder="Eg: Do not give Penicillin" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none"></textarea>
+      </div>
+
+      <div>
+        <label class="font-semibold text-gray-700">Address</label>
+        <textarea id="address" name="address" placeholder="Permanent Address" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none"></textarea>
+      </div>
+
+      <button type="submit" class="w-full py-3 bg-gradient-to-r from-teal-500 to-blue-600 text-white font-semibold rounded-xl shadow-md hover:shadow-xl hover:scale-[1.02] transition-all duration-300">
+        Save Details
+      </button>
+    </form>
+
+    <div id="statusMsg" class="text-center mt-4 text-sm font-medium"></div>
+  </div>
+
+  <script>
+ 
+
+    const form = document.getElementById("patientForm");
+    const statusMsg = document.getElementById("statusMsg");
+
+    form.addEventListener("submit", async function(e) {
+      e.preventDefault();
+      statusMsg.classList.remove("show");
+
+         // PAN Validation
+const pan = document.getElementById("pan").value.trim();
+const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+
+if (pan && !panRegex.test(pan)) {
+    alert("Invalid PAN format! Correct format: ABCDE1234F");
+    return;
+}
+
+      const formData = new FormData(form);
+
+      try {
+        const res = await fetch("http://127.0.0.1:5037/patient", {
+          method: "POST",
+          body: formData,
+        });
+
+        const result = await res.json();
+        statusMsg.classList.add("show");
+
+        if (res.ok) {
+          statusMsg.style.color = "green";
+          statusMsg.textContent = "✅ Patient details saved successfully! Redirecting...";
+          setTimeout(() => {
+            window.location.href = "Login.html";
+          }, 1500);
+        } else {
+          statusMsg.style.color = "red";
+          statusMsg.textContent = result.message || "❌ Failed to save patient details!";
+        }
+      } catch (err) {
+        console.error("Error saving profile:", err);
+        statusMsg.style.color = "red";
+        statusMsg.textContent = "⚠️ Server error. Please try again later.";
+        statusMsg.classList.add("show");
+      }
+    });
+  </script>
+</body>
+</html>

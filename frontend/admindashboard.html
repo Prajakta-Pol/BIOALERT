@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard - BioMediAlert</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #dbeafe, #e3f2fd, #f5f9ff);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade { animation: fadeIn 0.7s ease-in-out; }
+  </style>
+</head>
+
+<body class="relative text-gray-800">
+
+  <!-- Background Orbs -->
+  <div class="absolute w-[400px] h-[400px] bg-blue-400/20 rounded-full blur-3xl top-10 left-6"></div>
+  <div class="absolute w-[350px] h-[350px] bg-red-400/20 rounded-full blur-3xl bottom-10 right-6"></div>
+
+  <!-- NAVBAR -->
+  <nav class="glass flex justify-between items-center px-8 py-4 shadow-md sticky top-0 z-20 border-b border-white/40">
+    <div class="text-2xl font-bold text-[#0a3d62]">
+      BioMediAlert — Admin Panel
+    </div>
+
+    <button onclick="logout()" class="text-[#0a3d62] font-medium hover:text-red-600">
+      Logout
+    </button>
+  </nav>
+
+  <!-- DASHBOARD STATS -->
+  <section class="mx-auto mt-10 px-6 max-w-6xl animate-fade">
+    <h2 class="text-3xl font-bold text-[#0a3d62] mb-6">System Overview</h2>
+
+    <div class="grid md:grid-cols-4 gap-6">
+      <div class="glass p-5 rounded-xl shadow text-center">
+        <h3 class="text-xl font-semibold">🚑 Emergencies</h3>
+        <p class="text-3xl font-bold mt-2 text-red-600" id="emergencyCount">0</p>
+      </div>
+
+      <div class="glass p-5 rounded-xl shadow text-center">
+        <h3 class="text-xl font-semibold">👨‍⚕️ Doctors</h3>
+        <p class="text-3xl font-bold mt-2 text-blue-600" id="doctorCount">0</p>
+      </div>
+
+      <div class="glass p-5 rounded-xl shadow text-center">
+        <h3 class="text-xl font-semibold">👤 Patients</h3>
+        <p class="text-3xl font-bold mt-2 text-green-600" id="patientCount">0</p>
+      </div>
+
+      <div class="glass p-5 rounded-xl shadow text-center">
+        <h3 class="text-xl font-semibold">⚠️ Overrides</h3>
+        <p class="text-3xl font-bold mt-2 text-yellow-600" id="overrideCount">0</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- EMERGENCY ACCESS REQUESTS -->
+  <section class="mx-auto mt-14 px-6 max-w-6xl animate-fade">
+    <h2 class="text-2xl font-bold text-[#0a3d62] mb-4">Emergency Access Requests</h2>
+
+    <div class="glass rounded-2xl p-6 shadow-lg">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="text-gray-700 border-b">
+            <th class="py-2">Doctor</th>
+            <th>Patient ID</th>
+            <th>Reason</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="emergencyRequests"></tbody>
+
+      </table>
+    </div>
+  </section>
+
+  <!-- DOCTOR VERIFICATION -->
+  <section class="mx-auto mt-14 px-6 max-w-6xl animate-fade">
+    <h2 class="text-2xl font-bold text-[#0a3d62] mb-4">Doctor & Hospital Verification</h2>
+
+    <div class="glass rounded-2xl p-6 shadow-lg">
+      <table class="w-full">
+        <thead>
+          <tr class="border-b">
+            <th>Doctor Name</th>
+            <th>License No</th>
+            <th>Hospital</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="doctorVerificationTable"></tbody>
+
+      </table>
+    </div>
+  </section>
+
+  <!-- ACCESS LOGS -->
+  <section class="mx-auto mt-14 px-6 max-w-6xl animate-fade">
+    <h2 class="text-2xl font-bold text-[#0a3d62] mb-4">Access Logs & Audit Trail</h2>
+
+    <div class="glass rounded-2xl p-6 shadow-lg">
+      <ul id="auditLogs" class="space-y-3"></ul>
+
+    </div>
+  </section>
+
+  <!-- PATIENT CONSENT STATUS -->
+  <section class="mx-auto mt-14 px-6 max-w-6xl animate-fade">
+    <h2 class="text-2xl font-bold text-[#0a3d62] mb-4">Patient Consent Overview</h2>
+
+    <div class="glass rounded-2xl p-6 shadow-lg">
+      <p class="text-gray-700">
+        ✔ Emergency Override Allowed: <span class="font-semibold text-green-600">Yes</span><br>
+        ❌ Override Denied: <span class="font-semibold text-red-600">No</span>
+      </p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="mt-16 text-center py-6 bg-[#0a3d62] text-white">
+    © 2025 BioMediAlert — Admin Control Panel
+  </footer>
+
+  <script>
+    
+  async function loadAdminLogs() {
+    try {
+      const res = await fetch("http://127.0.0.1:5037/api/admin/logs");
+      const data = await res.json();
+
+      const logs = data.logs;
+      const auditList = document.getElementById("auditLogs");
+
+      auditList.innerHTML = "";
+
+      let emergencyCount = 0;
+      let overrideCount = 0;
+      const doctorSet = new Set();
+      const patientSet = new Set();
+
+      logs.forEach(log => {
+        doctorSet.add(log.doctor_license);
+        patientSet.add(log.patient_aadhaar);
+
+        if (log.access_method === "emergency") emergencyCount++;
+        if (log.action === "override") overrideCount++;
+
+        const li = document.createElement("li");
+        li.className = "border-b pb-2";
+
+        li.innerHTML = `
+          <strong>${log.doctor_name || log.doctor_license}</strong>
+          accessed patient
+          <strong>${log.patient_aadhaar}</strong>
+          <div class="text-sm text-gray-500">
+            ${log.access_method || "normal"} | ${log.reason || "N/A"}<br>
+            ⛓ Tx: ${log.blockchain_tx || "Not recorded"}<br>
+            🕒 ${log.date} ${log.time}
+          </div>
+        `;
+
+        auditList.appendChild(li);
+      });
+
+      // Update dashboard stats
+      document.getElementById("emergencyCount").innerText = emergencyCount;
+      document.getElementById("overrideCount").innerText = overrideCount;
+      document.getElementById("doctorCount").innerText = doctorSet.size;
+      document.getElementById("patientCount").innerText = patientSet.size;
+
+    } catch (err) {
+      console.error("Failed to load admin logs", err);
+    }
+  }
+
+  // Load logs on page load
+  loadAdminLogs();
+  async function loadDoctors() {
+  try {
+    const res = await fetch("http://127.0.0.1:5037/api/admin/doctors");
+    const data = await res.json();
+    const table = document.getElementById("doctorVerificationTable");
+
+    table.innerHTML = "";
+
+    data.doctors.forEach(doc => {
+      const color =
+        doc.status === "VERIFIED" ? "text-green-600" :
+        doc.status === "BLOCKED" ? "text-red-600" :
+        "text-yellow-600";
+
+      table.innerHTML += `
+        <tr class="border-b">
+          <td>${doc.name}</td>
+          <td>${doc.license}</td>
+          <td>${doc.hospital}</td>
+          <td class="${color} font-semibold">${doc.status}</td>
+          <td>
+            <button onclick="verifyDoctor('${doc.license}')" class="bg-blue-600 text-white px-3 py-1 rounded">Verify</button>
+            <button onclick="blockDoctor('${doc.license}')" class="bg-gray-600 text-white px-3 py-1 rounded ml-2">Block</button>
+          </td>
+        </tr>
+      `;
+    });
+
+  } catch (err) {
+    console.error("Failed to load doctors", err);
+  }
+}
+
+loadDoctors();
+async function verifyDoctor(licenseNo) {
+  await fetch("http://127.0.0.1:5037/api/admin/verify_doctor", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ licenseNo })
+  });
+  loadDoctors();
+}
+
+async function blockDoctor(licenseNo) {
+  await fetch("http://127.0.0.1:5037/api/admin/block_doctor", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ licenseNo })
+  });
+  loadDoctors();
+}
+</script>
+
+
+</body>
+</html>

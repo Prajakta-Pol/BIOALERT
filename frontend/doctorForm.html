@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Doctor Profile - BioMediAlert</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #bbdefb, #e3f2fd, #e8f6ff);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 3rem 1rem;
+      overflow-y: auto; /* ✅ enables vertical scrolling */
+      overflow-x: hidden;
+      position: relative;
+
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+
+    #statusMsg {
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+
+    #statusMsg.show {
+      opacity: 1;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Floating Gradient Orbs -->
+  <div class="absolute w-96 h-96 bg-blue-400/25 rounded-full blur-3xl top-8 left-6 animate-pulse"></div>
+  <div class="absolute w-80 h-80 bg-teal-400/25 rounded-full blur-3xl bottom-10 right-6 animate-pulse"></div>
+
+  <!-- Form Container -->
+  <div class="glass shadow-2xl rounded-2xl p-8 md:p-10 w-full max-w-2xl z-10">
+    <h2 class="text-3xl font-bold text-center text-[#0a3d62] mb-6">
+      👨‍⚕️ Doctor Profile
+    </h2>
+
+    <form id="doctorForm" enctype="multipart/form-data" class="space-y-4">
+      <!-- Personal Info -->
+      <div>
+        <label class="font-semibold text-gray-700">Full Name</label>
+        <input type="text" id="Fullname" name="Fullname" required
+          class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none">
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="font-semibold text-gray-700">Date of Birth</label>
+          <input type="date" id="dob" name="dob" required
+            class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none">
+        </div>
+        <div>
+          <label class="font-semibold text-gray-700">Gender</label>
+          <select id="gender" name="gender" required
+            class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none">
+            <option value="">Select Gender</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label class="font-semibold text-gray-700">License Number</label>
+        <input type="text" id="licenseNo" name="licenseNo" required
+          class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none">
+      </div>
+
+      <div>
+        <label class="font-semibold text-gray-700">Hospital / Clinic Name</label>
+        <input type="text" id="hospital" name="hospital" required
+          class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none">
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="font-semibold text-gray-700">Specialization</label>
+          <input type="text" id="specialization" name="specialization" required
+            class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none">
+        </div>
+        <div>
+          <label class="font-semibold text-gray-700">Years of Experience</label>
+          <input type="number" id="experience" name="experience" min="1" max="70" required
+            class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none">
+        </div>
+      </div>
+
+      <div>
+        <label class="font-semibold text-gray-700">Phone Number</label>
+        <input type="tel" id="phone" name="phone" required
+          class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none">
+      </div>
+
+      <div>
+        <label class="font-semibold text-gray-700">Email</label>
+        <input type="email" id="email" name="email" required
+          class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none">
+      </div>
+
+      <div>
+        <label class="font-semibold text-gray-700">Educational Qualification</label>
+        <input type="text" id="qualification" name="qualification" placeholder="e.g. MBBS, MD"
+          class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none">
+      </div>
+
+      <div>
+        <label class="font-semibold text-gray-700">Certifications (if any)</label>
+        <textarea id="certifications" name="certifications" placeholder="List certifications if any"
+          class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none"></textarea>
+      </div>
+
+      <div>
+        <label class="font-semibold text-gray-700">Profile Photo</label>
+        <input type="file" id="photo" name="photo" accept="image/*"
+          class="w-full p-2 border border-gray-300 rounded-xl">
+      </div>
+
+      <div>
+        <label class="font-semibold text-gray-700">Address</label>
+        <textarea id="address" name="address" placeholder="Clinic or Residence Address"
+          class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none"></textarea>
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit"
+        class="w-full py-3 bg-gradient-to-r from-blue-600 to-teal-500 text-white font-semibold rounded-xl shadow-md hover:scale-[1.02] hover:shadow-lg transition-all duration-300">
+        Save Profile
+      </button>
+    </form>
+
+    <!-- Status Message -->
+    <div id="statusMsg" class="text-center mt-4 text-sm font-medium"></div>
+  </div>
+
+  <script>
+    const form = document.getElementById("doctorForm");
+    const statusMsg = document.getElementById("statusMsg");
+
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      statusMsg.classList.remove("show");
+
+      const formData = new FormData(form);
+
+      try {
+        const res = await fetch("http://127.0.0.1:5037/api/doctor/details", {
+          method: "POST",
+          body: formData,
+        });
+
+        const result = await res.json();
+        statusMsg.classList.add("show");
+
+        if (res.ok) {
+          statusMsg.style.color = "green";
+          statusMsg.textContent = "✅ Doctor profile saved successfully! Redirecting...";
+          setTimeout(() => {
+            window.location.href = "doctorlogin.html";
+          }, 1500);
+        } else {
+          statusMsg.style.color = "red";
+          statusMsg.textContent = result.message || "❌ Failed to save doctor profile!";
+        }
+      } catch (err) {
+        console.error("Error saving profile:", err);
+        statusMsg.style.color = "red";
+        statusMsg.textContent = "⚠️ Server error. Please try again.";
+        statusMsg.classList.add("show");
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Patient Login - BioMediAlert</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+    }
+    .glass {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+    #loginMsg {
+      transition: all 0.4s ease;
+      opacity: 0;
+    }
+    #loginMsg.show {
+      opacity: 1;
+    }
+  </style>
+</head>
+
+<body
+  class="min-h-screen flex justify-center items-center bg-gradient-to-br from-[#f0f4ff] via-[#e8f6ff] to-[#dceeff] relative overflow-hidden"
+>
+
+  <!-- Background Glowing Elements -->
+  <div class="absolute w-96 h-96 bg-blue-400/25 rounded-full blur-3xl top-10 left-6 animate-pulse"></div>
+  <div class="absolute w-72 h-72 bg-teal-300/25 rounded-full blur-3xl bottom-10 right-6 animate-pulse"></div>
+
+  <!-- Login Card -->
+  <div class="glass p-10 rounded-2xl shadow-2xl w-[90%] max-w-md text-center border border-white/40 z-10">
+    <h2 class="text-3xl font-bold text-[#0a3d62] mb-6">Patient Login</h2>
+
+    <form id="loginForm" class="space-y-4">
+      <div class="text-left">
+        <label for="aadhaar" class="font-semibold text-gray-700">Aadhaar Number</label>
+        <input
+          type="text"
+          id="aadhaar"
+          required
+          class="w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-600 focus:outline-none"
+          placeholder="Enter 12-digit Aadhaar"
+        />
+      </div>
+      <div class="text-left">
+        <label for="password" class="font-semibold text-gray-700">Password</label>
+        <input
+          type="password"
+          id="password"
+          required
+          class="w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-600 focus:outline-none"
+          placeholder="Strong Password"
+        />
+      </div>
+      
+
+      <button
+        type="submit" id="loginBtn"
+        class="w-full py-3 bg-gradient-to-r from-teal-500 to-blue-600 text-white font-semibold rounded-xl shadow-md hover:shadow-xl hover:scale-[1.03] transition-all duration-300"
+      >
+        Login
+      </button>
+    </form>
+
+    <!-- Inline success/error message -->
+    <div id="loginMsg" class="mt-4 font-medium text-sm text-center"></div>
+
+    <p class="mt-6 text-gray-600 text-sm">
+      New user?
+      <a href="roleSignup.html" class="text-blue-700 font-semibold hover:underline">
+        Create an account
+      </a>
+    </p>
+  </div>
+
+ <script>
+window.addEventListener("DOMContentLoaded", () => {
+  console.log("JS WORKING");
+  console.log("THIS IS THE CORRECT LOGIN FILE");
+
+  const form = document.getElementById("loginForm");
+  const msgBox = document.getElementById("loginMsg");
+
+  console.log("JS loaded, form:", form);
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    console.log("Submit clicked!");
+
+    const aadhaar = document.getElementById("aadhaar").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    console.log("Entered Aadhaar:", aadhaar);
+
+    try {
+      const res = await fetch("http://127.0.0.1:5037/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ aadhaar, password })
+      });
+
+      const result = await res.json();
+
+      msgBox.style.display = "block";
+      msgBox.classList.add("show");
+
+      if (res.ok && result.success) {
+        msgBox.style.color = "green";
+        msgBox.textContent = "Login successful! Redirecting...";
+
+        console.log("Redirecting now...");
+
+        // Redirect to dashboard
+        setTimeout(() => {
+          window.location.href = `PatientDS.html?aadhaar=${aadhaar}`;
+        }, 1500);
+
+      } else {
+        msgBox.style.color = "red";
+        msgBox.textContent = result.message || "Invalid Aadhaar number";
+      }
+
+    } catch (err) {
+      console.error("Error:", err);
+      msgBox.style.display = "block";
+      msgBox.classList.add("show");
+      msgBox.style.color = "red";
+      msgBox.textContent = "Server error. Try again later.";
+    }
+
+
+    // 2. AUTOMATICALLY CREATE PATIENT LOG ENTRY
+    await fetch("http://localhost:5037/createPatientLog", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            patientAadhaar: aadhaar,
+            doctorName: sessionStorage.getItem("doctorName"),      // saved at doctor login
+            hospitalName: sessionStorage.getItem("hospitalName"),  // saved at doctor login
+        })
+    });
+
+    // 3. REDIRECT TO PATIENT INFO PAGE
+    window.location.href = `PatientDS.html?aadhaar=${aadhaar}`;
+});
+  });
+
+</script>
+
+
+</body>
+</html>

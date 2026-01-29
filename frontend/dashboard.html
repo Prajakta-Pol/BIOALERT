@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BioMediAlert - Dashboard</title>
+ <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      scroll-behavior: smooth;
+    }
+
+    /* Custom Animations */
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-fadeIn { animation: fadeIn 1s ease-in-out; }
+    .animate-float { animation: float 4s ease-in-out infinite; }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+  </style>
+</head>
+
+<body class="bg-gradient-to-br from-[#e3f2fd] via-[#f5f9ff] to-[#dbeafe] text-gray-800">
+
+  <!-- Navbar -->
+  <nav class="fixed top-0 left-0 w-full z-50 glass shadow-md">
+    <div class="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
+      <h1 class="text-2xl font-semibold text-[#0a3d62] tracking-wide hover:scale-105 transition-transform duration-300">
+        BioMediAlert
+      </h1>
+      <ul class="flex space-x-6">
+        <li><a href="#about" class="text-gray-700 font-medium hover:text-[#0a3d62] transition">About</a></li>
+        <li><a href="roleSignup.html" class="text-gray-700 font-medium hover:text-[#0a3d62] transition">Signup</a></li>
+        <li><a href="roleLogin.html" class="text-gray-700 font-medium hover:text-[#0a3d62] transition">Login</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="pt-32 pb-24 px-6 text-center relative overflow-hidden bg-gradient-to-br from-[#0a3d62] via-[#1565c0] to-[#00bcd4] text-white">
+    <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+
+    <!-- Floating Orbs -->
+    <div class="absolute top-10 left-10 w-72 h-72 bg-teal-400/20 rounded-full blur-3xl animate-float"></div>
+    <div class="absolute bottom-0 right-10 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-float"></div>
+
+    <div class="relative z-10 max-w-3xl mx-auto animate-fadeIn">
+      <h2 class="text-5xl font-extrabold mb-4 leading-tight">
+        Your Emergency Medical Data, <br class="hidden md:block" />
+        <span class="text-teal-300">Secured. Instant. Trusted.</span>
+      </h2>
+      <p class="text-lg opacity-90 leading-relaxed mb-8">
+        Empowering doctors and patients with instant, secure access to medical records using blockchain technology — because every second counts.
+      </p>
+      <a href="#about"
+        class="inline-block bg-white text-[#0a3d62] font-semibold px-8 py-3 rounded-full shadow-lg hover:bg-teal-100 hover:shadow-xl transition transform hover:scale-105">
+        Explore Features
+      </a>
+    </div>
+  </section>
+
+  <!-- Features / Info Section -->
+  <section id="about" class="max-w-6xl mx-auto py-24 px-6 grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
+    <!-- Card 1 -->
+    <div class="glass rounded-2xl shadow-lg p-8 hover:shadow-2xl transition-all hover:-translate-y-2 border border-gray-100 text-center animate-fadeIn">
+      <div class="text-5xl mb-4">⚡</div>
+      <h3 class="text-xl font-semibold text-[#0a3d62] mb-2">Quick Access</h3>
+      <p class="text-gray-600 leading-relaxed">
+        Retrieve patient data instantly during emergencies — saving crucial minutes that can save lives.
+      </p>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="glass rounded-2xl shadow-lg p-8 hover:shadow-2xl transition-all hover:-translate-y-2 border border-gray-100 text-center animate-fadeIn delay-100">
+      <div class="text-5xl mb-4">🔒</div>
+      <h3 class="text-xl font-semibold text-[#0a3d62] mb-2">Blockchain Security</h3>
+      <p class="text-gray-600 leading-relaxed">
+        Blockchain-powered encryption ensures your medical data is tamper-proof, private, and transparent.
+      </p>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="glass rounded-2xl shadow-lg p-8 hover:shadow-2xl transition-all hover:-translate-y-2 border border-gray-100 text-center animate-fadeIn delay-200">
+      <div class="text-5xl mb-4">✅</div>
+      <h3 class="text-xl font-semibold text-[#0a3d62] mb-2">Patient Consent</h3>
+      <p class="text-gray-600 leading-relaxed">
+        You control who can view your records — maintaining privacy while ensuring emergency access when needed.
+      </p>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="glass rounded-2xl shadow-lg p-8 border border-gray-100 animate-fadeIn delay-300">
+  <div class="text-5xl mb-4 text-center">👩‍⚕️</div>
+  <h3 class="text-xl font-semibold text-[#0a3d62] mb-4 text-center">
+    Connected Doctors
+  </h3>
+
+  <div id="verifiedDoctors" class="space-y-3 text-gray-700">
+    <!-- Verified doctors will be injected here -->
+  </div>
+</div>
+
+  </section>
+
+  <!-- CTA Section -->
+  <section class="text-center py-24 bg-gradient-to-r from-teal-600 via-blue-600 to-[#0a3d62] text-white relative overflow-hidden">
+    <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/triangles.png')]"></div>
+    <div class="relative z-10">
+      <h3 class="text-4xl font-bold mb-4">Be a part of the healthcare revolution 🚀</h3>
+      <p class="mb-6 opacity-90 text-lg">Join our growing network of doctors, hospitals, and patients worldwide.</p>
+      <a href="roleSignup.html"
+        class="bg-white text-[#0a3d62] font-semibold px-8 py-3 rounded-full shadow-lg hover:scale-110 hover:shadow-2xl transition">
+        Get Started
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-[#0a3d62] text-white text-center py-6 mt-10 border-t border-teal-500/30">
+    <p class="text-sm opacity-90">
+      © 2025 <span class="font-semibold">BioMediAlert</span> — All Rights Reserved
+    </p>
+  </footer>
+  <script>
+async function loadVerifiedDoctors() {
+  try {
+    const res = await fetch("http://127.0.0.1:5037/api/admin/doctors");
+    const data = await res.json();
+
+    const container = document.getElementById("verifiedDoctors");
+    container.innerHTML = "";
+
+    const verified = data.doctors.filter(d => d.status === "VERIFIED");
+
+    if (verified.length === 0) {
+      container.innerHTML = `<p class="text-sm text-gray-500">No verified doctors yet.</p>`;
+      return;
+    }
+
+    verified.forEach(doc => {
+      container.innerHTML += `
+        <div class="flex items-center justify-between bg-white/70 p-3 rounded-lg shadow-sm">
+          <div>
+            <p class="font-semibold text-[#0a3d62]">Dr. ${doc.name}</p>
+            <p class="text-sm text-gray-600">${doc.hospital}</p>
+          </div>
+          <span class="text-green-600 font-semibold text-sm">✔ Verified</span>
+        </div>
+      `;
+    });
+
+  } catch (err) {
+    console.error("Failed to load verified doctors", err);
+  }
+}
+
+// Load on page open
+loadVerifiedDoctors();
+</script>
+
+</body>
+</html>
