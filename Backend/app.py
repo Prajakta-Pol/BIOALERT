@@ -21,6 +21,8 @@ from datetime import datetime
 import smtplib
 from email.mime.text import MIMEText
 
+#from face_utils import extract_face_vector
+#import pickle
 
 # ---------- APP SETUP ----------
 app = Flask(__name__)
@@ -300,6 +302,45 @@ def signup():
         traceback.print_exc()
         return jsonify({"success": False, "message": "Server error. Try again later."}), 500
 
+#@app.route("/api/patient/register_face", methods=["POST"])
+#def register_face():
+ #   try:
+  #      aadhaar = request.form.get("aadhaar")
+   #     photo = request.files.get("photo")
+
+    #    if not aadhaar or not photo:
+     #       return jsonify({"success": False, "message": "Aadhaar and face photo required"}), 400
+
+        # 📁 Save face image
+        #os.makedirs("uploads/faces", exist_ok=True)
+        #face_path = f"uploads/faces/{aadhaar}.jpg"
+        #photo.save(face_path)
+
+        # 🧠 Extract face vector
+        #face_vector = extract_face_vector(face_path)
+
+       # if face_vector is None:
+         #   return jsonify({"success": False, "message": "No face detected"}), 400
+
+        #with sqlite3.connect("users.db") as conn:
+           # cursor = conn.cursor()
+           # cursor.execute("""
+           #     UPDATE patientForm
+           #     SET face_vector = ?
+           #     WHERE aadhaar = ?
+           # """, (pickle.dumps(face_vector), aadhaar))
+            #conn.commit()
+
+        #return jsonify({
+         #   "success": True,
+          #  "message": "Face registered successfully"
+        #}), 200
+
+   # except Exception as e:
+    #    print("🔥 Face registration error:", e)
+    #    traceback.print_exc()
+    #    return jsonify({"success": False, "message": "Server error"}), 500
+
 
 @app.route("/patient", methods=["POST"])
 def save_patient():
@@ -315,7 +356,7 @@ def save_patient():
         for f in required:
             if not data.get(f):
                 return jsonify({"success": False, "message": f"{f} is required!"}), 400
-         # PAN VALIDATION HERE (✅ inside function)
+        # PAN VALIDATION HERE (✅ inside function)
         pan = data.get("pan", "").upper()
 
         if pan and not re.match(r"^[A-Z]{5}[0-9]{4}[A-Z]$", pan):
@@ -859,8 +900,22 @@ def doctor_search_patient():
         access_method = data.get("access_method", "unknown")
         reason = data.get("reason", "emergency")
 
-        if not aadhaar or len(aadhaar) != 12 or not aadhaar.isdigit():
-            return jsonify({"success": False, "message": "Invalid Aadhaar"}), 400
+        #if not aadhaar or len(aadhaar) != 12 or not aadhaar.isdigit():
+          #  return jsonify({"success": False, "message": "Invalid Aadhaar"}), 400
+        # ✅ At least one identifier must be provided
+        if not any([aadhaar, pan, license, emergency_id]):
+            return jsonify({
+                "success": False,
+                "message": "Provide Aadhaar, PAN, License, or Emergency ID"
+            }), 400
+
+        # ✅ If Aadhaar is provided, validate it
+        if aadhaar:
+            if len(aadhaar) != 12 or not aadhaar.isdigit():
+                return jsonify({
+                    "success": False,
+                    "message": "Invalid Aadhaar"
+                }), 400
 
         conn = sqlite3.connect("users.db")
         cursor = conn.cursor()

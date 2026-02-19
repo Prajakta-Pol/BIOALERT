@@ -118,7 +118,7 @@
     </div>
   </section>
 <!-- Search Options Modal -->
-<div id="searchModal" class="fixed inset-0 bg-black/40 flex justify-center items-center hidden">
+<div id="searchModal" class="fixed inset-0 bg-black/40 flex justify-center items-center hidden z-50">
   <div class="glass p-6 rounded-2xl w-[90%] max-w-md text-center shadow-xl border border-white/50">
 
     <h2 class="text-2xl font-semibold mb-4 text-[#0a3d62]">Choose Search Method</h2>
@@ -134,6 +134,7 @@
     </select>
 <!-- ✅ NEW: REASON DROPDOWN -->
     <select id="searchReason" class="w-full p-3 rounded-lg border border-gray-300 mb-4">
+      <option value="">Select Reason</option>
       <option value="emergency">🚨 Emergency - Accident/Unconscious</option>
       <option value="critical">⚠️ Critical Condition</option>
       <option value="life_threatening">💀 Life-threatening</option>
@@ -145,7 +146,7 @@
       placeholder="Enter ID number..."
       class="w-full p-3 rounded-lg border border-gray-300 mb-4 hidden"
     />
-
+    <p id="modalMessage" class="text-lg font-medium mb-3 hidden"></p>
     <button onclick="processSearch()" 
       class="bg-blue-600 text-white px-5 py-2.5 rounded-lg w-full hover:bg-blue-700 transition">
       Continue
@@ -166,6 +167,7 @@
   <script>
     function openSearchOptions() {
       document.getElementById("searchModal").classList.remove("hidden");
+      document.getElementById("modalMessage").classList.add("hidden");
     }
 
     function closeSearchOptions() {
@@ -176,7 +178,7 @@
       const type = this.value;
       const input = document.getElementById("searchValue");
 
-      if (type === "qr") {
+      if (type === "") {
         input.classList.add("hidden");
       } else {
         input.classList.remove("hidden");
@@ -225,8 +227,9 @@
             true
           );
           setTimeout(() => {
+            closeSearchOptions();
           window.location.href = `PatientView.html?aadhaar=${data.patient.aadhaar || data.patient.id}`;
-          }, 1500);
+          },500);
         } else {
             showResult("❌ " + (data.message || "Patient not found!"), false);
         }
@@ -237,27 +240,29 @@
       }
     }
     function showResult(message, success) {
-      const box = document.getElementById("searchResult");
-      const msg = document.getElementById("resultMsg");
+      //const box = document.getElementById("searchResult");
+      //const msg = document.getElementById("resultMsg");
+      const msg = document.getElementById("modalMessage");
 
       msg.innerHTML = message;
       msg.className = success
-        ? "text-green-700 text-lg font-medium"
-        : "text-red-600 text-lg font-medium";
+        ? "text-green-700 text-lg font-medium mb-3"
+        : "text-red-600 text-lg font-medium mb-3";
 
-      box.classList.remove("hidden");
+      //box.classList.remove("hidden");
+      msg.classList.remove("hidden");
     }
 
-    function loadDoctorProfile() {
-      fetch("http://127.0.0.1:5037/api/doctor/profile")
-      .then(res => res.json())
-      .then(data => {
-      if (data.success) {
-        document.getElementById("doctorPhoto").src =
-          "http://127.0.0.1:5037/uploads/" + data.photo;
-      }
-    });
-}
+    //function loadDoctorProfile() {
+      //fetch("http://127.0.0.1:5037/api/doctor/profile")
+      //.then(res => res.json())
+      //.then(data => {
+      //if (data.success) {
+        //document.getElementById("doctorPhoto").src =
+          //"http://127.0.0.1:5037/uploads/" + data.photo;
+      //}
+    //});
+//}
 
 
     async function loadDoctorDashboardProfile() {

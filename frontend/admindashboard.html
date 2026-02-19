@@ -247,6 +247,10 @@ async function blockDoctor(licenseNo) {
   });
   loadDoctors();
 }
+function logout() {
+      localStorage.removeItem("currentAdmin");
+      window.location.href = "dashboard.html";
+    }
 </script>
 
 
