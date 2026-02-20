@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Doctor Access Logs - BioMediAlert</title>
+
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
@@ -13,6 +14,7 @@
       background: linear-gradient(135deg, #dbeafe, #e3f2fd, #f5f9ff);
       min-height: 100vh;
     }
+
     .glass {
       background: rgba(255, 255, 255, 0.85);
       backdrop-filter: blur(20px);
@@ -25,7 +27,10 @@
 
 <!-- Navbar -->
 <nav class="glass flex justify-between items-center px-6 py-4 rounded-2xl shadow-lg mb-10 sticky top-4 z-20">
-  <div class="text-2xl font-bold text-[#0a3d62]">BioMediAlert</div>
+  <div class="text-2xl font-bold text-[#0a3d62]">
+    BioMediAlert
+  </div>
+
   <a href="doctorDS.html"
      class="bg-[#0a3d62] text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
      ← Back
@@ -42,10 +47,11 @@
   </p>
 </div>
 
-<!-- Logs -->
+<!-- Logs Table -->
 <div class="glass max-w-6xl mx-auto p-8 rounded-3xl shadow-2xl">
   <div class="overflow-x-auto">
     <table class="w-full table-auto">
+      
       <thead class="bg-gradient-to-r from-[#0a3d62] to-blue-600 text-white">
         <tr>
           <th class="p-6 text-left">👤 Patient Aadhaar</th>
@@ -55,6 +61,7 @@
           <th class="p-6 text-left">🔗 Blockchain</th>
         </tr>
       </thead>
+
       <tbody id="logsBody" class="divide-y divide-gray-200">
         <tr>
           <td colspan="5" class="text-center py-12 text-gray-500">
@@ -62,6 +69,7 @@
           </td>
         </tr>
       </tbody>
+
     </table>
   </div>
 </div>
@@ -84,21 +92,51 @@ async function loadDoctorLogs() {
       return;
     }
 
+    // 🔒 Mask Aadhaar (show last 4 digits)
+    const maskAadhaar = (aadhaar) => {
+      if (!aadhaar) return "—";
+      const str = aadhaar.toString();
+      if (str.length <= 4) return str;
+      return "********" + str.slice(-4);
+    };
+
+    // 🔒 Mask Emergency ID (show last 4 characters)
+    const maskEmergencyID = (id) => {
+      if (!id) return "—";
+      const str = id.toString();
+      if (str.length <= 4) return str;
+      return "******" + str.slice(-4);
+    };
+
     tbody.innerHTML = data.logs.map(log => `
       <tr class="hover:bg-blue-50 transition">
-        <td class="p-6 font-semibold">${log.patient_aadhaar}</td>
-        <td class="p-6">${log.emergency_id || '—'}</td>
+        
+        <td class="p-6 font-semibold tracking-wider">
+          ${maskAadhaar(log.patient_aadhaar)}
+        </td>
+
+        <td class="p-6 tracking-wide">
+          ${maskEmergencyID(log.emergency_id)}
+        </td>
+
         <td class="p-6">
           ${log.date}<br>
           <span class="text-sm text-gray-500">${log.time}</span>
         </td>
-        <td class="p-6">${log.reason || 'N/A'}</td>
-        <td class="p-6">${log.blockchain_status}</td>
+
+        <td class="p-6">
+          ${log.reason || 'N/A'}
+        </td>
+
+        <td class="p-6">
+          ${log.blockchain_status}
+        </td>
+
       </tr>
     `).join("");
 
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error(error);
     document.getElementById("logsBody").innerHTML = `
       <tr>
         <td colspan="5" class="text-center py-12 text-red-500">

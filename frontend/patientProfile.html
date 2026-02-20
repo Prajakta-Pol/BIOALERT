@@ -118,6 +118,11 @@
         <textarea id="surgeries" name="history" placeholder="E.g., Appendectomy (2018), Knee Surgery (2021)"
           class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none"></textarea>
       </div>
+      <div>
+        <label class="font-semibold text-gray-700">Address</label>
+        <textarea id="address" name="address" placeholder="address"
+          class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none"></textarea>
+      </div>
 
       <!-- Buttons -->
       <button type="submit"
@@ -152,6 +157,7 @@
           document.getElementById("instructions").value = data.instructions || "";
           document.getElementById("emergencyContact").value = data.emergencyPhone || "";
           document.getElementById("surgeries").value = data.history || "";
+          document.getElementById("address").value = data.address|| "";
         } else {
           alert("Session expired. Please login again.");
           window.location.href = "Login.html";

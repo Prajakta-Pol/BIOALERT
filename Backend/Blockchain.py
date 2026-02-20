@@ -1,20 +1,7 @@
 from web3 import Web3
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 import os
 import hashlib
-
-# Load .env variables
-load_dotenv()
-ALCHEMY_URL = os.getenv("ALCHEMY_URL")
-PRIVATE_KEY = os.getenv("PRIVATE_KEY")
-PUBLIC_ADDRESS = os.getenv("PUBLIC_ADDRESS")
-
-# Connect to Alchemy node
-w3 = Web3(Web3.HTTPProvider(ALCHEMY_URL))
-if not w3.is_connected():
-    print("❌ Blockchain connection failed!")
-else:
-    print("✅ Connected to Polygon Amoy network")
 
 # Use a simple hash for data
 def hash_data(data: str):

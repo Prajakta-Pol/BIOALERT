@@ -39,18 +39,49 @@
 <body class="bg-gradient-to-br from-[#e3f2fd] via-[#f5f9ff] to-[#dbeafe] text-gray-800">
 
   <!-- Navbar -->
-  <nav class="fixed top-0 left-0 w-full z-50 glass shadow-md">
-    <div class="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
-      <h1 class="text-2xl font-semibold text-[#0a3d62] tracking-wide hover:scale-105 transition-transform duration-300">
-        BioMediAlert
-      </h1>
-      <ul class="flex space-x-6">
-        <li><a href="#about" class="text-gray-700 font-medium hover:text-[#0a3d62] transition">About</a></li>
-        <li><a href="roleSignup.html" class="text-gray-700 font-medium hover:text-[#0a3d62] transition">Signup</a></li>
-        <li><a href="roleLogin.html" class="text-gray-700 font-medium hover:text-[#0a3d62] transition">Login</a></li>
-      </ul>
-    </div>
-  </nav>
+
+
+
+<nav class="fixed top-0 left-0 w-full z-50 glass shadow-md">
+  <div class="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
+    
+    <!-- Logo -->
+    <h1 class="text-2xl font-semibold text-[#0a3d62] tracking-wide hover:scale-105 transition-transform duration-300">
+      BioMediAlert
+    </h1>
+
+    <!-- Desktop Menu -->
+    <ul class="hidden md:flex space-x-6">
+      <li><a href="#about" class="text-gray-700 font-medium hover:text-[#0a3d62] transition">About</a></li>
+      <li><a href="roleSignup.html" class="text-gray-700 font-medium hover:text-[#0a3d62] transition">Signup</a></li>
+      <li><a href="roleLogin.html" class="text-gray-700 font-medium hover:text-[#0a3d62] transition">Login</a></li>
+    </ul>
+
+    <!-- Hamburger -->
+    <button id="menu-btn" class="md:hidden flex flex-col space-y-1 focus:outline-none">
+      <span class="w-6 h-0.5 bg-[#0a3d62] transition-all duration-300"></span>
+      <span class="w-6 h-0.5 bg-[#0a3d62] transition-all duration-300"></span>
+      <span class="w-6 h-0.5 bg-[#0a3d62] transition-all duration-300"></span>
+    </button>
+
+  </div>
+
+  <!-- Mobile Menu (Sliding Version) -->
+  <div id="mobile-menu"
+       class="md:hidden overflow-hidden max-h-0 transition-all duration-500 ease-in-out px-6">
+    <ul class="flex flex-col space-y-4 py-4">
+      <li><a href="#about" class="mobile-link text-gray-700 font-medium hover:text-[#0a3d62] transition">About</a></li>
+      <li><a href="roleSignup.html" class="mobile-link text-gray-700 font-medium hover:text-[#0a3d62] transition">Signup</a></li>
+      <li><a href="roleLogin.html" class="mobile-link text-gray-700 font-medium hover:text-[#0a3d62] transition">Login</a></li>
+    </ul>
+  </div>
+</nav>
+
+
+
+
+
+
 
   <!-- Hero Section -->
   <section class="pt-32 pb-24 px-6 text-center relative overflow-hidden bg-gradient-to-br from-[#0a3d62] via-[#1565c0] to-[#00bcd4] text-white">
@@ -104,17 +135,23 @@
       </p>
     </div>
 
+
+
+
     <!-- Card 4 -->
+    
     <div class="glass rounded-2xl shadow-lg p-8 border border-gray-100 animate-fadeIn delay-300">
   <div class="text-5xl mb-4 text-center">👩‍⚕️</div>
   <h3 class="text-xl font-semibold text-[#0a3d62] mb-4 text-center">
     Connected Doctors
   </h3>
 
-  <div id="verifiedDoctors" class="space-y-3 text-gray-700">
+<div id="verifiedDoctors" class="space-y-3 text-gray-700 max-h-64 overflow-y-auto scroll-smooth pr-2">
     <!-- Verified doctors will be injected here -->
   </div>
 </div>
+
+
 
   </section>
 
@@ -137,6 +174,35 @@
       © 2025 <span class="font-semibold">BioMediAlert</span> — All Rights Reserved
     </p>
   </footer>
+
+
+  <script>
+  const menuBtn = document.getElementById("menu-btn");
+  const mobileMenu = document.getElementById("mobile-menu");
+  const mobileLinks = document.querySelectorAll(".mobile-link");
+
+  menuBtn.addEventListener("click", () => {
+    if (mobileMenu.classList.contains("max-h-0")) {
+      mobileMenu.classList.remove("max-h-0");
+      mobileMenu.classList.add("max-h-96"); // opens smoothly
+    } else {
+      mobileMenu.classList.remove("max-h-96");
+      mobileMenu.classList.add("max-h-0"); // closes smoothly
+    }
+  });
+
+  // Close menu when link is clicked
+  mobileLinks.forEach(link => {
+    link.addEventListener("click", () => {
+      mobileMenu.classList.remove("max-h-96");
+      mobileMenu.classList.add("max-h-0");
+    });
+  });
+</script>
+
+
+
+
   <script>
 async function loadVerifiedDoctors() {
   try {

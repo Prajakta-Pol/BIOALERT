@@ -34,8 +34,8 @@ app.config['MAIL_SERVER'] = 'smtp.gmail.com'          # Gmail SMTP server
 app.config['MAIL_PORT'] = 587                         # TLS port
 app.config['MAIL_USE_TLS'] = True                     # Use TLS
 app.config['MAIL_USE_SSL'] = False                    # Do NOT use SSL with TLS
-app.config['MAIL_USERNAME'] = 'vaishnavijayade2@gmail.com'  # Replace with your Gmail
-app.config['MAIL_PASSWORD'] = 'avvu gwfn nmuw sscc'     # Replace with the App Password
+app.config['MAIL_USERNAME'] = 'biomedialert@gmail.com'  # Replace with your Gmail
+app.config['MAIL_PASSWORD'] = 'kdky usep rpfu qlpb'     # Replace with the App Password
 
 # Initialize Mail
 mail = Mail(app)
@@ -61,7 +61,7 @@ If this was unauthorized, please contact support immediately.
     msg["To"] = to_email
 
     with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-        server.login("vaishnavijayade2@gmail.com", "avvugwfnnmuwsscc")
+        server.login("biomedialert@gmail.com", "kdkyuseprpfuqlpb")
         server.send_message(msg)
 
 
@@ -86,7 +86,7 @@ import json
 
 # Blockchain config - UPDATE THESE AFTER DEPLOYMENT
 GANACHE_URL = 'http://127.0.0.1:7545'
-CONTRACT_ADDRESS = '0xD63B838041472CcC1FFd9694eAC7b84da1ac5e1B'  # UPDATE after deploy
+CONTRACT_ADDRESS = '0xce843eE54c78A98B3CA62c48Db72D1b01D73982f'  # UPDATE after deploy
 GANACHE_ACCOUNT = '0x17AC1edCE6e28C187bf8bAad3784eCd69b3B4cBD'     # UPDATE from test_ganache.py
 GANACHE_PRIVATE_KEY = '0x4308dc7d31c82c33d85e665e8b70155bb994e4c04eb025986bc2d780ef4c7c17'  # UPDATE
 
@@ -104,28 +104,6 @@ def init_blockchain_tables():
     conn = sqlite3.connect("users.db")
     cursor = conn.cursor()
     
-    # Enhanced patient_logs with blockchain columns
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS blockchain_patient_logs (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            patient_aadhaar TEXT NOT NULL,
-            emergency_id TEXT,
-            doctor_license TEXT NOT NULL,
-            doctor_name TEXT,
-            hospital_name TEXT,
-            date TEXT NOT NULL,
-            time TEXT NOT NULL,
-            access_method TEXT,
-            reason TEXT,
-            action TEXT NOT NULL,
-            blockchain_tx TEXT,
-            log_hash TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (patient_aadhaar) REFERENCES patientForm(aadhaar)
-        )
-    """)
-    conn.commit()
-    conn.close()
 
 # Call it
 init_blockchain_tables()
@@ -212,7 +190,24 @@ def init_db():
     )
 """)
 
+    # Enhanced patient_logs with blockchain columns
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS Patient_history  (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
     
+        patient_aadhaar TEXT NOT NULL,
+        doctor_license TEXT NOT NULL,
+
+        doctor_name TEXT NOT NULL,       -- snapshot
+        hospital_name TEXT NOT NULL,     -- snapshot
+    
+        diagnosis TEXT,
+        prescription TEXT,
+        treatment_notes TEXT,
+
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
 
 
     # Doctor form table
@@ -302,44 +297,91 @@ def signup():
         traceback.print_exc()
         return jsonify({"success": False, "message": "Server error. Try again later."}), 500
 
-#@app.route("/api/patient/register_face", methods=["POST"])
-#def register_face():
- #   try:
-  #      aadhaar = request.form.get("aadhaar")
-   #     photo = request.files.get("photo")
 
-    #    if not aadhaar or not photo:
-     #       return jsonify({"success": False, "message": "Aadhaar and face photo required"}), 400
 
-        # 📁 Save face image
-        #os.makedirs("uploads/faces", exist_ok=True)
-        #face_path = f"uploads/faces/{aadhaar}.jpg"
-        #photo.save(face_path)
+@app.route("/api/patient/history/<aadhaar>", methods=["GET"])
+def get_patient_history(aadhaar):
+    try:
+        with sqlite3.connect("users.db") as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                SELECT doctor_name,
+                       hospital_name,
+                       diagnosis,
+                       prescription,
+                       treatment_notes,
+                       created_at
+                FROM Patient_history
+                WHERE patient_aadhaar = ?
+                ORDER BY id DESC
+            """, (aadhaar,))
 
-        # 🧠 Extract face vector
-        #face_vector = extract_face_vector(face_path)
+            rows = cursor.fetchall()
 
-       # if face_vector is None:
-         #   return jsonify({"success": False, "message": "No face detected"}), 400
+        history = []
+        for row in rows:
+            date = ""
+            time = ""
 
-        #with sqlite3.connect("users.db") as conn:
-           # cursor = conn.cursor()
-           # cursor.execute("""
-           #     UPDATE patientForm
-           #     SET face_vector = ?
-           #     WHERE aadhaar = ?
-           # """, (pickle.dumps(face_vector), aadhaar))
-            #conn.commit()
+            if row[5]:
+                parts = row[5].split(" ")
+                date = parts[0]
+                time = parts[1] if len(parts) > 1 else ""
 
-        #return jsonify({
-         #   "success": True,
-          #  "message": "Face registered successfully"
-        #}), 200
+            history.append({
+                "doctor_name": row[0],
+                "hospital": row[1],
+                "diagnosis": row[2],
+                "prescription": row[3],
+                "notes": row[4],
+                "date": date,
+                "time": time
+            })
 
-   # except Exception as e:
-    #    print("🔥 Face registration error:", e)
-    #    traceback.print_exc()
-    #    return jsonify({"success": False, "message": "Server error"}), 500
+        return jsonify({"success": True, "history": history})
+
+    except Exception as e:
+        print("ERROR:", e)   # 🔥 This will show error in terminal
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+
+@app.route("/api/patient/history", methods=["POST"])
+def add_patient_history():
+    try:
+        data = request.get_json()
+
+        patient_aadhaar = data.get("aadhaar")
+        doctor_license = data.get("doctor_license")
+        doctor_name = data.get("doctor_name")
+        hospital_name = data.get("hospital_name")
+        diagnosis = data.get("diagnosis")
+        prescription = data.get("prescription")
+        treatment_notes = data.get("treatment_notes")
+        created_at = data.get("created_at")
+
+        if not all([patient_aadhaar, doctor_license, diagnosis, prescription]):
+            return jsonify({"success": False, "error": "Missing required fields"}), 400
+
+        now = datetime.now()
+        date = now.strftime("%Y-%m-%d")
+        time = now.strftime("%H:%M:%S")
+
+        with sqlite3.connect("users.db") as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                INSERT INTO Patient_history
+                (patient_aadhaar, doctor_license, doctor_name, hospital_name ,diagnosis, prescription, treatment_notes, created_at)
+                VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (patient_aadhaar, doctor_license,doctor_name,hospital_name ,diagnosis, prescription, treatment_notes, created_at))
+            conn.commit()
+
+        return jsonify({"success": True, "message": "Treatment added successfully"})
+
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+    
+
 
 
 @app.route("/patient", methods=["POST"])
@@ -407,6 +449,8 @@ def save_patient():
         print("🔥 save_patient error:", e)
         traceback.print_exc()
         return jsonify({"success": False, "message": str(e)}), 500
+
+
 
 
 @app.route("/login", methods=["POST"])

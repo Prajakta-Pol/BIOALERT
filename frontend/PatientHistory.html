@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Patient Treatment History - BioMediAlert</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #dbeafe, #e3f2fd, #f5f9ff);
+      min-height: 100vh;
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+  </style>
+</head>
+
+<body class="p-8 text-gray-800">
+
+<div class="glass max-w-6xl mx-auto p-8 rounded-2xl shadow-2xl">
+
+  <!-- Back Button -->
+  <button onclick="goBack()"
+    class="mb-6 bg-[#0a3d62] hover:bg-blue-700 text-white px-5 py-2 rounded-lg shadow-md">
+    ← Back
+  </button>
+
+  <h2 class="text-3xl font-bold text-[#0a3d62] mb-8">
+    🩺 Patient Treatment History
+  </h2>
+
+  <!-- History Table -->
+  <div class="overflow-x-auto mb-10">
+    <table class="w-full border border-gray-200 text-center rounded-lg overflow-hidden">
+      <thead class="bg-blue-100 text-[#0a3d62] font-semibold">
+        <tr>
+          <th class="p-3">Doctor</th>
+          <th class="p-3">Hospital</th>
+          <th class="p-3">Diagnosis</th>
+          <th class="p-3">Prescription</th>
+          <th class="p-3">Notes</th>
+          <th class="p-3">Date and Time</th>
+        </tr>
+      </thead>
+      <tbody id="historyBody" class="bg-white"></tbody>
+    </table>
+  </div>
+
+  <!-- Add Treatment Section -->
+<div class="border-t pt-8">
+  <h3 class="text-xl font-semibold text-[#0a3d62] mb-4">
+    ➕ Add New Treatment
+  </h3>
+
+
+
+  
+  <div class="grid md:grid-cols-2 gap-4">
+      <form id="medicalForm">
+
+  <div class="grid md:grid-cols-2 gap-4">
+
+    <input id="doctor_name" type="text"
+      class="p-3 border rounded-lg"
+      placeholder="Doctor Name">
+
+    <input id="hospital_name" type="text"
+      class="p-3 border rounded-lg"
+      placeholder="Hospital Name">
+
+    <input id="diagnosis" type="text"
+      class="p-3 border rounded-lg"
+      placeholder="Diagnosis">
+
+    <input id="prescription" type="text"
+      class="p-3 border rounded-lg"
+      placeholder="Prescription">
+
+    <textarea id="treatment_notes"
+      class="p-3 border rounded-lg md:col-span-2"
+      placeholder="Treatment Notes"></textarea>
+
+  </div>
+
+
+</form>
+
+  </div>
+  
+  
+  <div class="mt-6">
+      <button type="submit" onclick="submitTreatment()"
+      class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg shadow-md">
+      Save Treatment
+    </button>
+</div>
+</div>
+
+
+</div>
+
+
+<script>
+
+// ===============================
+// Get URL Parameters
+// ===============================
+// ===============================
+// Get URL Parameters
+// ===============================
+const params = new URLSearchParams(window.location.search);
+
+const encoded = params.get("aadhaar");
+const doctorLicense = params.get("license");
+
+// Decode Aadhaar safely
+let aadhaar = "";
+
+try {
+  aadhaar = encoded ? atob(encoded) : "";
+} catch (e) {
+  console.error("Invalid Aadhaar encoding");
+  aadhaar = "";
+}
+// ===============================
+// Go Back
+// ===============================
+function goBack() {
+  window.history.back();
+}
+
+// ===============================
+// Load Treatment History
+// ===============================
+async function loadHistory() {
+
+  if (!aadhaar) {
+    document.getElementById("historyBody").innerHTML = `
+      <tr>
+        <td colspan="7" class="p-4 text-red-500">
+          Aadhaar not found in URL.
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      `http://127.0.0.1:5037/api/patient/history/${aadhaar}`
+    );
+
+    const data = await response.json();
+    const body = document.getElementById("historyBody");
+    body.innerHTML = "";
+
+    if (!data.success || !data.history) {
+      body.innerHTML = `
+        <tr>
+          <td colspan="7" class="p-4 text-gray-500">
+            No treatment history available.
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    data.history.forEach(record => {
+      body.innerHTML += `
+  <tr class="border-t">
+    <td class="p-3">${record.doctor_name}</td>
+    <td class="p-3">${record.hospital}</td>
+    <td class="p-3">${record.diagnosis}</td>
+    <td class="p-3">${record.prescription}</td>
+    <td class="p-3">${record.notes}</td>
+    <td class="p-3">${record.date}</td>
+    <td class="p-3">${record.time}</td>
+  </tr>
+`;
+    });
+
+  } catch (error) {
+    console.error("Error loading history:", error);
+  }
+}
+
+
+async function submitTreatment() {
+
+  const doctor_name = document.getElementById("doctor_name").value.trim();
+  const hospital_name = document.getElementById("hospital_name").value.trim();
+  const diagnosis = document.getElementById("diagnosis").value.trim();
+  const prescription = document.getElementById("prescription").value.trim();
+  const treatment_notes = document.getElementById("treatment_notes").value.trim();
+
+  if (!doctor_name || !hospital_name || !diagnosis || !prescription) {
+    alert("Doctor, Hospital, Diagnosis and Prescription are required.");
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      "http://127.0.0.1:5037/api/patient/history",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          aadhaar: aadhaar,
+          doctor_license: doctorLicense,
+          doctor_name: doctor_name,
+          hospital_name: hospital_name,
+          diagnosis: diagnosis,
+          prescription: prescription,
+          treatment_notes: treatment_notes,
+          created_at: new Date().toISOString()
+        })
+      }
+    );
+
+    const data = await response.json();
+
+    if (data.success) {
+      console.log("Treatment added successfully!");
+      loadHistory();
+
+      // ✅ ADDED FEATURE: Clear form fields
+      document.getElementById("doctor_name").value = "";
+      document.getElementById("hospital_name").value = "";
+      document.getElementById("diagnosis").value = "";
+      document.getElementById("prescription").value = "";
+      document.getElementById("treatment_notes").value = "";
+    } else {
+      alert(data.error || "Error saving treatment.");
+    }
+
+  } catch (error) {
+    console.error("Submit error:", error);
+    alert("Server error.");
+  }
+}
+
+
+loadHistory();
+
+</script>
+
+
+
+</body>
+</html>

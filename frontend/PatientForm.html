@@ -75,18 +75,21 @@
 
       <div>
         <label class="font-semibold text-gray-700">Aadhaar Number</label>
-        <input type="text" id="aadhaar" name="aadhaar" placeholder="12-digit Aadhaar" required class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none">
+        <input type="text" id="aadhaar" name="aadhaar" placeholder="12-digit Aadhaar" maxlength="12"
+          minlength="12" required class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none">
       </div>
 
       <div>
   <label class="font-semibold text-gray-700">PAN Number</label>
-  <input type="text" id="pan" name="pan" placeholder="ABCDE1234F" 
+  <input type="text" id="pan" name="pan" placeholder="ABCDE1234F" maxlength="10"
+          minlength="10" oninput="this.value = this.value.toUpperCase()"
          class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none">
 </div>
 
 <div>
   <label class="font-semibold text-gray-700">Driving License Number</label>
-  <input type="text" id="license" name="license" placeholder="DL-XX-0000000000"
+  <input type="text" id="license" name="license" placeholder="DLXX0000000000" maxlength="16"
+          minlength="15" oninput="this.value = this.value.toUpperCase()"
          class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none">
 </div>
       <div>
@@ -102,7 +105,7 @@
         </div>
         <div>
           <label class="font-semibold text-gray-700">Emergency Contact Phone</label>
-          <input type="tel" id="emergencyPhone" name="emergencyPhone" required class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none">
+          <input type="tel" id="emergencyPhone" maxlength="10" name="emergencyPhone" required class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none">
         </div>
       </div>
 

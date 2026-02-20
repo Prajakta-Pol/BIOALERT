@@ -64,6 +64,17 @@
       ← Back
     </button>
 
+<!--THe button was here-->>
+
+
+
+
+
+
+
+<!--THe button was here-->>
+
+
     <!-- Title -->
     <h2 class="text-3xl font-bold text-center text-[#0a3d62] mb-8">
       🩺 Patient Medical Information
@@ -81,11 +92,96 @@
     <div id="patientData" class="space-y-3 text-gray-700 text-lg">
       Loading patient details...
     </div>
+    <!-- Treatment History Section -->
+<div id="historySection" class="mt-10 hidden">
+
+  <h3 class="text-2xl font-semibold text-[#0a3d62] mb-4">
+    Treatment History
+  </h3>
+
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+      <thead class="bg-blue-100 text-[#0a3d62]">
+        <tr>
+          <th class="p-2">Doctor</th>
+          <th class="p-2">Hospital</th>
+          <th class="p-2">Diagnosis</th>
+          <th class="p-2">Prescription</th>
+          <th class="p-2">Notes</th>
+          <th class="p-2">Date</th>
+          <th class="p-2">Time</th>
+        </tr>
+      </thead>
+      <tbody id="historyTableBody" class="text-center bg-white"></tbody>
+    </table>
+  </div>
+
+  <div class="mt-6 text-center">
+    <button onclick="showAddForm()"
+      class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow-md">
+      ➕ Update History
+    </button>
+  </div>
+
+</div>
+<!-- Add Treatment Form -->
+<div id="addHistoryForm" class="mt-8 hidden">
+
+  <h3 class="text-xl font-semibold text-[#0a3d62] mb-4">
+    Add Treatment
+  </h3>
+
+  <input id="diagnosis" type="text"
+    class="w-full mb-3 p-2 border rounded-lg"
+    placeholder="Diagnosis">
+
+  <input id="prescription" type="text"
+    class="w-full mb-3 p-2 border rounded-lg"
+    placeholder="Prescription">
+
+  <textarea id="notes"
+    class="w-full mb-3 p-2 border rounded-lg"
+    placeholder="Treatment Notes"></textarea>
+
+  <div class="flex gap-4">
+    <button onclick="submitTreatment()"
+      class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg">
+      Save
+    </button>
+
+    <button onclick="cancelAddForm()"
+      class="bg-gray-500 hover:bg-gray-600 text-white px-5 py-2 rounded-lg">
+      Cancel
+    </button>
+  </div>
+
+</div>
+
+ <!-- Doctor License Input -->
+<div class="absolute right-6 top-6 flex items-center gap-2">
+
+  <input id="doctorLicenseInput" type="text"
+    placeholder="Enter License No"
+    class="px-3 py-2 rounded-lg border text-sm w-40" />
+
+  <button onclick="openHistoryPage()"
+    class="bg-[#0a3d62] hover:bg-blue-700
+           text-white px-4 py-2 rounded-lg text-sm font-medium
+           transition-all duration-300 shadow-md">
+    📜 View History
+  </button>
+
+</div>
+
+
   </div>
 
 <script>
   const params = new URLSearchParams(window.location.search);
-  const aadhaar = params.get("aadhaar");
+  const encoded = params.get("aadhaar");
+
+// Decode Aadhaar
+const aadhaar = atob(encoded);
 
 async function loadDetails() {
   try {
@@ -99,7 +195,7 @@ async function loadDetails() {
       `http://127.0.0.1:5037/api/doctor/patient_by_aadhaar?aadhaar=${aadhaar}`
     );
 
-    const data = await response.json();   // ✅ THIS WAS MISSING
+    const data = await response.json();
 
     if (!response.ok || !data.aadhaar) {
       document.getElementById("patientData").innerHTML =
@@ -107,7 +203,6 @@ async function loadDetails() {
       return;
     }
 
-    // ✅ PHOTO FIX
     if (data.photo) {
       document.getElementById("photo").src =
         `http://127.0.0.1:5037/uploads/${data.photo}`;
@@ -145,11 +240,126 @@ async function loadDetails() {
   }
 }
 
+
+
 function goBack() {
   window.location.href = "doctorDS.html";
 }
 
 loadDetails();
+
+
+
+
+
+/* ===========================
+   OLD FUNCTIONS (UNCHANGED)
+=========================== */
+
+async function viewHistory() {
+  try {
+    const response = await fetch(
+      `http://127.0.0.1:5037/api/patient/history/${aadhaar}`
+    );
+
+    const data = await response.json();
+
+    if (!data.success) {
+      alert("No history found.");
+      return;
+    }
+
+    const tableBody = document.getElementById("historyTableBody");
+    tableBody.innerHTML = "";
+
+    data.history.forEach(record => {
+      tableBody.innerHTML += `
+        <tr>
+          <td class="p-2">${record.doctor_name}</td>
+          <td class="p-2">${record.hospital}</td>
+          <td class="p-2">${record.diagnosis}</td>
+          <td class="p-2">${record.prescription}</td>
+          <td class="p-2">${record.notes}</td>
+          <td class="p-2">${record.date}</td>
+          <td class="p-2">${record.time}</td>
+        </tr>
+      `;
+    });
+
+    document.getElementById("historySection").classList.remove("hidden");
+
+  } catch (error) {
+    console.error("Error loading history:", error);
+  }
+}
+
+function showAddForm() {
+  document.getElementById("addHistoryForm").classList.remove("hidden");
+}
+
+function cancelAddForm() {
+  document.getElementById("addHistoryForm").classList.add("hidden");
+}
+
+function openHistoryPage() {
+
+  const doctorLicense = document.getElementById("doctorLicenseInput").value.trim();
+
+  if (!doctorLicense) {
+    alert("Please enter Doctor License Number.");
+    return;
+  }
+
+  window.location.href =
+    `patientHistory.html?aadhaar=${encoded}&license=${doctorLicense}`;
+}
+
+
+async function submitTreatment() {
+  const diagnosis = document.getElementById("diagnosis").value;
+  const prescription = document.getElementById("prescription").value;
+  const notes = document.getElementById("notes").value;
+  const params = new URLSearchParams(window.location.search);
+  const aadhaar = atob(params.get("aadhaar"));
+  const doctorLicense = params.get("license");
+
+  if (!diagnosis || !prescription) {
+    alert("Diagnosis and Prescription are required.");
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      "http://127.0.0.1:5037/api/patient/history",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          aadhaar: aadhaar,
+          doctor_license: doctorLicense,
+          diagnosis: diagnosis,
+          prescription: prescription,
+          notes: notes
+        })
+      }
+    );
+
+    const data = await response.json();
+
+    if (data.success) {
+      alert("Treatment saved successfully!");
+      viewHistory();
+      cancelAddForm();
+    } else {
+      alert(data.error || "Error saving treatment.");
+    }
+
+  } catch (error) {
+    console.error("Error:", error);
+    alert("Server error.");
+  }
+}
+
 </script>
 
 </body>

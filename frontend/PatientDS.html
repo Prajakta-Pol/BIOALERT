@@ -58,25 +58,37 @@
   <div class="absolute w-[350px] h-[350px] bg-teal-400/20 rounded-full blur-3xl bottom-10 right-6 floating"></div>
 
   <!-- Navbar -->
-  <nav class="glass flex justify-between items-center px-8 py-4 shadow-md sticky top-0 z-20 border-b border-white/40">
-    <div class="text-2xl font-bold text-[#0a3d62] tracking-wide hover:scale-105 transition-transform duration-300">
-      BioMediAlert
-    </div>
+ <nav class="glass flex items-center px-8 py-4 shadow-md sticky top-0 z-20 border-b border-white/40">
 
+  <!-- Left -->
+  <div class="flex-1">
+    <a href="dashboard.html"
+       class="text-2xl font-bold text-[#0a3d62] tracking-wide 
+       hover:scale-105 transition-transform duration-300 
+       inline-block cursor-pointer select-none">
+       BioMediAlert
+    </a>
+  </div>
+
+  <!-- Center -->
+  <div class="flex-1 text-center">
     <p id="showEmergencyID" class="text-lg font-semibold text-blue-600"></p>
+  </div>
 
-    <div class="flex items-center space-x-4">
-      <button onclick="openQRPopup()" 
-        class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
-        Show QR
-      </button>
+  <!-- Right -->
+  <div class="flex-1 flex justify-end items-center space-x-4">
+    <button onclick="openQRPopup()" 
+      class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+      Show QR
+    </button>
 
-      <a href="dashboard.html" onclick="logout()" 
-        class="hover:text-blue-600 font-medium transition text-[#0a3d62]">
-        Logout
-      </a>
-    </div>
-  </nav>
+    <a href="./dashboard.html" onclick="logout()" 
+      class="hover:text-blue-600 font-medium transition text-[#0a3d62] cursor-pointer">
+      Logout
+    </a>
+  </div>
+
+</nav>
 
   <!-- Welcome Card -->
   <div class="flex items-center justify-center mt-12 animate-fade">

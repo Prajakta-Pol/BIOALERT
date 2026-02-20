@@ -1,3 +1,7 @@
+from solcx import install_solc
+install_solc("0.8.19")
+exit()
+
 import solcx
 import json
 
